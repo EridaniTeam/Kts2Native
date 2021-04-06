@@ -4,7 +4,7 @@ kotlinc -script script2native.kts <yourscript.kts> [options] (sep: generate a ba
 
 build native executable for script2native.kts
 
-On Windows platform it will require Native Tool cmd, simply install Visudio and search "x64(or 32) Native Tools Command
+On Windows platform it will require Native Tool cmd, simply install Visual Studio and search "x64(or 32) Native Tools Command
 Prompt for VS 2019"
 
 ```
