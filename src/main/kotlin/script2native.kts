@@ -57,39 +57,9 @@ with(ZipOutputStream(File("$shortName-all.jar").outputStream())) {
                         visitEnd()
                     }
 
-                classNode.methods
-                    .find { m -> m.name == "<init>" && m.desc == "([Ljava/lang/String;)V" }!!
-                    .apply {
-                        val ktScriptCallInsn = instructions
-                            .filterIsInstance<MethodInsnNode>().first { insn ->
-                                insn.opcode == INVOKESPECIAL
-                                        && insn.owner == "kotlin/script/templates/standard/ScriptTemplateWithArgs"
-                                        && insn.name == "<init>"
-                                        && desc == "([Ljava/lang/String;)V"
-                            }
-
-                        instructions.remove(ktScriptCallInsn.previous.previous)
-                        instructions.set(ktScriptCallInsn.previous, VarInsnNode(ALOAD, 0))
-                        instructions.set(ktScriptCallInsn,
-                            MethodInsnNode(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false))
-                    }
 
 
-                classNode.methods.forEach { m ->
-                    m.instructions
-                        .filterIsInstance<MethodInsnNode>()
-                        .filter { insn ->
-                            insn.opcode == INVOKEVIRTUAL
-                                    && insn.name == "getArgs"
-                                    && insn.desc == "()[Ljava/lang/String;"
-                        }.forEach { insn ->
-                            m.instructions.set(insn, IntInsnNode(ALOAD, 1))
-                        }
-                }
-
-
-                val writer = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)
-                classNode.visit(V1_8, ACC_PUBLIC, mainClassName, null, "java/lang/Object", null)
+                val writer = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                 classNode.accept(writer)
                 putNextEntry(ZipEntry(it.name))
                 write(writer.toByteArray())

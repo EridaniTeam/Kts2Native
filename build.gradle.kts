@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    compileOnly(kotlin("script-runtime"))
+    download(kotlin("script-runtime"))
     download("org.ow2.asm:asm:9.1")
     download("org.ow2.asm:asm-tree:9.1")
     implementation(download)
